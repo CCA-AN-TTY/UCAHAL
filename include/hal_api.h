@@ -94,7 +94,6 @@ extern void console_putc(char c);
 extern void console_putstr(const char* str);
 extern void console_putln(const char* str);
 extern void console_puthex(uintn_t hex);
-extern void console_set_color();
 extern void console_reset_color();
 extern void console_putbin(unsigned char val);
 extern void console_write(char *args[], int argc);

@@ -5,7 +5,9 @@
 #include "arch/rv64/hart.h"
 #include "../boot.h"
 #include "../kmain.h"
+#include "arch/rv64/dtb.h"
 #include "arch/rv64/smoldtb.h"
+
 
 extern char _end[];
 
@@ -19,7 +21,6 @@ void hart_main(uintn_t core_id,void* dtb){
   }
   console_putln("hart main core id");
   console_puthex(core_id);
-  console_putln("hello");
   reg_t sp;
   asm volatile ("mv sp,%0" : "=r"(sp));
   console_puthex(sp);
@@ -33,32 +34,7 @@ void hart_main(uintn_t core_id,void* dtb){
   }
 }
 
-static void* copy_get_dtb(uint32_t* dtb){
-  if (be32(dtb[0]) != MAGIC) {
-    return NULL;
-  }
-  uint32_t totalsize = be32(dtb[1]);
-  void* dt = balloc(totalsize);
-  for (uintptr_t i = 0; i<totalsize;i++){
-    ((uint8_t*)dt)[i]=((uint8_t*)dtb)[i];
-  }
-  uint8_t* dtb_addr = (uint8_t*)dtb;
-  for(uintn_t i=0;i<totalsize;i++){
-    dtb_addr[i] = 0;
-  }
-  return (void*)dt;
-}
 
-static int str_sim(const char* one,const char* two){
-  uintptr_t i=0;
-  while (one[i]!='\0' || two[i]!='\0'){
-    if (one[i]!=two[i]){
-      return 0;
-    }
-    i++;
-  }
-  return 1;
-}
 
 void hal_init(uintn_t core_id,void* dtb){
   asm volatile ("FENCE.I" ::: "memory");
@@ -70,7 +46,7 @@ void hal_init(uintn_t core_id,void* dtb){
   console_puthex(core_id);
   binit((uintn_t)_end);
   void* copy_dtb = copy_get_dtb((uint32_t*)dtb);
-  console_putln("START");
+  console_putln("CORE ID:");
   hal_trap_init(core_id,0);
 
 
@@ -92,25 +68,18 @@ void hal_init(uintn_t core_id,void* dtb){
   dtb_prop* property=node->props;
   uintn_t start_addr,memory_length;
 
-  console_putln("NAME");
   while(true){
-    console_putln(property->name);
     if(str_sim(property->name,"reg")){
-      console_putln("FOUND");
       //console_puthex(property->length>>((BIT_LEN>>5)|1));
-      console_putln("DATA");
       start_addr = ((uintn_t*)property->data)[0];
       memory_length = ((uintn_t*)property->data)[1];
       break;
     }else{
-      console_putln("next");
-      console_puthex(property->length);
       if(property->next){
         property=property->next;
       }else{
         break;
       }
-      console_puthex((uintn_t)property->next);
     }
   }
 

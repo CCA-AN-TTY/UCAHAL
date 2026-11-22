@@ -8,12 +8,12 @@ char console_buff [CONSOLE_BUFF_LEN];
 char text_buff    [CONSOLE_BUFF_LEN*3];
 
 inline int hal_console_init(){
-  *UART_REG_RXCTRL = 0x00000001; 
-  *UART_REG_IE     = 0x00000002;
+  *UART_REG_RXCTRL = 1; 
+  *UART_REG_IE     = 2;
   return 0;
 }
 
-sbi_ret_t console_getc(){
+inline sbi_ret_t console_getc(){
   sbi_args_t sbi_args = {0};
   sbi_args.EID = DBCN;
   sbi_args.FID = 1;
@@ -38,7 +38,7 @@ void console_putstr(const char *str) {
   unsigned long len = 0;
   while (str[len] != '\0') len++;
   sbi_args.EID = DBCN;
-  sbi_args.FID = 0; //Console putchar
+  sbi_args.FID = 0;
   sbi_args.a0 = len;
   sbi_args.a1 = (unsigned long)str;
   sbi_call(&sbi_args);
@@ -55,25 +55,28 @@ void console_putln(const char *str) {
 void console_isr(){
   console_putc((char)0x56);
   sbi_ret_t ret = console_getc();
+  console_putln("RES");
+  console_puthex((uintn_t)ret.value);
+  console_putc('\n');
   if(ret.error){
     console_putln("ERROR");
     return;
   }
-  uintn_t i=curr_char;
+  uintn_t i=0;
   uintn_t t=0;
   while(i<ret.value){
-    if (console_buff[i] == 0x7F || console_buff[i] == '\b') {
+    if (console_buff[i%CONSOLE_BUFF_LEN] == 0x7F || console_buff[i%CONSOLE_BUFF_LEN] == '\b') {
       text_buff[t]='\b';
       t+=1;
       text_buff[t]=' ';
       t+=1;
       text_buff[t]='\b';
-    }else if (console_buff[i] == '\n' || console_buff[i] == '\r') {
+    }else if (console_buff[i%CONSOLE_BUFF_LEN] == '\n' || console_buff[i%CONSOLE_BUFF_LEN] == '\r') {
 
       text_buff[t]='\r';
       t+=1;
       text_buff[t]='\n';
-      command(&console_buff,curr_char);
+      //command(&console_buff,curr_char);
       clear_buffer();
     }else {
       text_buff[t]=console_buff[i];
@@ -81,11 +84,16 @@ void console_isr(){
     console_buff[i]='\0';
     //make it to the kmain buffer
     i++;
+    curr_char++;
+
     t+=1;
   }
-  curr_char++;
+
+
 
   console_putstr(text_buff);
+  console_putc((char)0x56);
+
 
 
   i=0;

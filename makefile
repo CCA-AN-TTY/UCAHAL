@@ -1,5 +1,5 @@
-CSRC_C := $(shell find ./src -name "*.c")
-CSRC_S := $(shell find ./src -name "*.s")
+CSRC_C := $(shell find ./ -name "*.c")
+CSRC_S := $(shell find ./ -name "*.s") 
 CSRC   := $(CSRC_C) $(CSRC_S)
 
 CTAR := $(patsubst %.c, bin/%.o, $(notdir $(CSRC_C))) \
@@ -28,6 +28,7 @@ bin/%.o: %.c
 
 bin/%.o: %.s
 	$(CC) --target=riscv64-unknown-elf $(CFLG) $(INCDIRS) -c $< -o $@
+
 
 comp: $(CTAR)
 	@echo "Objects successfully compiled in folder bin"

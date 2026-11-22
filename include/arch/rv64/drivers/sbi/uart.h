@@ -7,6 +7,7 @@
 #define UART0_BASE 0x10010000UL
 #define UART_REG_RXCTRL ((volatile unsigned int *)(UART0_BASE + 0x0C))
 #define UART_REG_IE     ((volatile unsigned int *)(UART0_BASE + 0x10))
+#define UART_REG_IP     ((volatile unsigned int *)(UART0_BASE + 0x14))
 
 
 extern __attribute__((noinline)) inline int hal_console_init();
@@ -21,4 +22,4 @@ extern __attribute__((noinline)) void console_write(char *args[], int argc);
 extern __attribute__((always_inline)) void console_set_color(char *color);
 extern __attribute__((always_inline)) void console_reset_color();
 
-#endif
+#endif //UART_H
