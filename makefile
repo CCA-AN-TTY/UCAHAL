@@ -7,7 +7,7 @@ CTAR := $(patsubst %.c, bin/%.o, $(notdir $(CSRC_C))) \
 
 CFLG := -march=rv64gc -mabi=lp64 -nostdinc -nostdlib -Winline -fPIC \
         -fdebug-prefix-map=$(CURDIR)=. -ffile-prefix-map=$(CURDIR)=. \
-        -mno-relax -mcmodel=medany -O3
+        -mno-relax -mcmodel=medany -O3 
 
 CC := clang
 INCDIRS := -I$(CURDIR)/include -I$(CURDIR)/include/bsp/sifive_fu540
@@ -24,10 +24,10 @@ ecomp:
 VPATH := $(sort $(dir $(CSRC)))
 
 bin/%.o: %.c
-	$(CC) --target=riscv64-unknown-elf $(CFLG) $(INCDIRS) -c $< -o $@
+	$(CC) --target=riscv64-unknown-elf $(CFLG)-D DTB $(INCDIRS) -c $< -o $@
 
 bin/%.o: %.s
-	$(CC) --target=riscv64-unknown-elf $(CFLG) $(INCDIRS) -c $< -o $@
+	$(CC) --target=riscv64-unknown-elf $(CFLG)-D DTB $(INCDIRS) -c $< -o $@
 
 
 comp: $(CTAR)

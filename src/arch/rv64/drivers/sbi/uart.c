@@ -53,11 +53,7 @@ void console_putln(const char *str) {
 }
 
 void console_isr(){
-  console_putc((char)0x56);
   sbi_ret_t ret = console_getc();
-  console_putln("RES");
-  console_puthex((uintn_t)ret.value);
-  console_putc('\n');
   if(ret.error){
     console_putln("ERROR");
     return;
@@ -92,7 +88,6 @@ void console_isr(){
 
 
   console_putstr(text_buff);
-  console_putc((char)0x56);
 
 
 
