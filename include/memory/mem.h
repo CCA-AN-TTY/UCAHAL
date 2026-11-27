@@ -8,4 +8,5 @@ extern void* balloc(size_t size);
 extern void bfree(void* ptr, size_t size);
 extern unsigned long malign(uintn_t size);
 
+extern __attribute__((always_inline)) inline void memset(void *from, unsigned char val, uintn_t len);
 #endif  //MEM_H

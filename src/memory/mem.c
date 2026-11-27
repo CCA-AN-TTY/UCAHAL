@@ -21,3 +21,8 @@ unsigned long malign(uintn_t size){
   bptr=res;
   return res;
 }
+inline void memset(void *from, unsigned char val, uintn_t len) {
+  for (unsigned long i = 0; i < len; i++) {
+    ((unsigned char *)from)[i] = val;
+  }
+}

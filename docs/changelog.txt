@@ -1,0 +1,13 @@
+v 0.0.1
+Fix+refactor : uart(.c),hal_api(.c,.h),hal_types(.h,New),hal_parse(.h,New),dtb(.c),makefile
+src/arch/rv64/drivers/sbi/uart.c: file modified, bug fix , deleting debug marks
+src/arch/rv64/dtb.c: file modified, functions were moved from hal_api.c to dtb.c, making hal_api.c more arch-agnostic
+include/hal_types.h: file created, UCAHAL's types were moved from hal_api.h to hal_types.h
+include/hal_parse.h: file created, main goal: abstract data parsing.
+include/hal_api.h: file modified.
+makefile: file modified, added -D DTB for debug.
+hal_api.c: file modified, made file more arch-agnostic.
+
+v 0.0.2
+refactor+bug fix: restructure to cross-arch layout (risc_v/{rv32,rv64,bsp})  
+(Developer's note: "Dear God...")

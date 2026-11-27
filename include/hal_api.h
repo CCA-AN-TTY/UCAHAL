@@ -3,8 +3,6 @@
 
 #include "hal_types.h"
 
-
-
 typedef enum __attribute__ ((packed)){
   memory_reserved = 0,
   memory_hole     = 1,
@@ -30,19 +28,26 @@ typedef struct __attribute__ ((aligned(BIT_LEN >> 2))){
   uint8_t aboot_info[sizeof(uintn_t)];  //For now
 }boot_info_t;
 
-typedef struct __attribute__ ((aligned(64))){
+#include "hal_spec.h"
+
+typedef struct __attribute__ ((aligned(64))) core_info_t{
   uintn_t  core_id;
   uintn_t  stack_top;
   uintn_t  dcache_block_size;
   uintn_t  cpu_id;
-  uint32_t crc32;
-  uint32_t has_cmo;
   void* tlsf_base;
-  uint8_t  core_info[CORE_INFO_LEN];
+  main_registers_t* main_registers;
+  uint8_t  core_info[(64-(((BIT_LEN<<3)*6)&63))]; 
 }core_info_t;
+
+
 
 #include "hal_parse.h"
 
+
+extern uint8_t flags;
+
+#define CLZ_SUPPORT (1<<0)
 
 
 
@@ -52,9 +57,15 @@ extern  __attribute__((no_inline)) void hal_trap_init(unsigned long hartid,uint8
 // Topological-Semantic Mechanism Pointer (TSMP)
 
 extern void hal_init(uintn_t core_id,void* TSMP);
-extern void hart_main(uintn_t core_id,void* TSMP);
-extern __attribute__ ((always_inline)) void hal_store_core_info ( core_info_t* core_info);
-extern __attribute__ ((always_inline)) inline core_info_t* get_core_info_ptr();
+
+extern uint8_t highest_bit_index_64(uint64_t x);
+
+//got from wikepedia, source: https://en.wikipedia.org/wiki/De_Bruijn_sequence
+//under CC-BY-SA 4.0 START LINE
+extern uint8_t highest_bit_index_32(uint32_t v);
+//got from wikepedia, source: https://en.wikipedia.org/wiki/De_Bruijn_sequence
+//under CC-BY-SA 4.0 END LINE
+
 
 
 extern void console_putc(char c);
@@ -71,7 +82,6 @@ extern void console_set_color(char* color);
 extern  void hal_send_ipi(unsigned long core);
 //WIP
 
-extern __attribute__ ((always_inline)) uintn_t hal_get_core_id();
 
 extern void hal_shutdown();
 

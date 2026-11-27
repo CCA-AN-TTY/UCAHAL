@@ -1,5 +1,17 @@
-CSRC_C := $(shell find ./ -name "*.c")
-CSRC_S := $(shell find ./ -name "*.s") 
+ARCH ?= rv64
+ARCH_TREE ?= risc_v
+BSP ?= sifive_fu540
+
+CSRC_C := $(shell find ./src/arch/$(ARCH_TREE)/$(ARCH) -name "*.c") \
+ hal_api.c  $(shell find ./src/arch/$(ARCH_TREE)/bsp/$(BSP) -name "*.c")\
+ $(shell find ./src/memory -name "*.c")\
+ $(shell find ./src/control -name "*.c")\
+ ./src/arch/$(ARCH_TREE)/spec.c\
+ 
+
+
+CSRC_S := $(shell find ./boot/$(ARCH_TREE)/$(ARCH) -name "*.s") $(shell find ./src/arch/$(ARCH_TREE)/$(ARCH) -name "*.s") $(shell find ./src/arch/$(ARCH_TREE)/bsp/$(BSP) -name "*.s")
+
 CSRC   := $(CSRC_C) $(CSRC_S)
 
 CTAR := $(patsubst %.c, bin/%.o, $(notdir $(CSRC_C))) \
@@ -10,7 +22,7 @@ CFLG := -march=rv64gc -mabi=lp64 -nostdinc -nostdlib -Winline -fPIC \
         -mno-relax -mcmodel=medany -O3 
 
 CC := clang
-INCDIRS := -I$(CURDIR)/include -I$(CURDIR)/include/bsp/sifive_fu540
+INCDIRS := -I$(CURDIR)/include -I$(CURDIR)/include/arch/$(ARCH_TREE)/bsp/$(BSP) -I$(CURDIR)/include/arch/$(ARCH_TREE)/$(ARCH) -I$(CURDIR)/include/arch/$(ARCH_TREE)
 AR := llvm-ar
 
 .PHONY: all clean ecomp comp

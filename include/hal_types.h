@@ -1,6 +1,8 @@
 #ifndef HAL_TYPES_H
 #define HAL_TYPES_H
 
+typedef void (*void_func_ptr)(void);
+
 #if defined (__riscv) && (__riscv_xlen == 64)
   typedef unsigned char uint8_t;
   typedef unsigned short uint16_t;
@@ -25,7 +27,36 @@
   #define B_BIT ((1ULL<<63))
   #define INTERRUPT_BIT ((1ULL << 63))
   #define BIT_LEN 64
-  #define CORE_INFO_LEN 16
+  #define PRIOR_BIT_LEN 63
+
+  #define NULL ((void*)0)
+  #define true ((bool)1)
+  #define false ((bool)0)
+
+  #define ANSI
+#else if defined (__riscv) && (__riscv_xlen == 32)
+  typedef unsigned char uint8_t;
+  typedef unsigned short uint16_t;
+  typedef unsigned int uint32_t;
+  typedef uint32_t uintn_t;
+  typedef uint32_t reg_t;
+  typedef signed char int8_t;
+  typedef signed short int16_t;
+  typedef signed int int32_t;
+
+  typedef uint32_t uptr_t;
+  #define assert(exp) ((void)0)
+  #define tlsf_assert assert
+  typedef uint32_t uintmax_t;
+  typedef unsigned int uintptr_t;
+  typedef unsigned char bool;
+  typedef int ptrdiff_t;
+  #define CHAR_BIT 4
+  #define B_BIT ((1ULL<<31))
+  #define INTERRUPT_BIT ((1ULL << 31))
+  #define BIT_LEN 32
+  #define PRIOR_BIT_LEN 31
+
 
   #define NULL ((void*)0)
   #define true ((bool)1)
@@ -57,6 +88,9 @@
   #define BG_WHITE "\x1b[107m"
 
 #endif
+
+
+
 
 
 #endif  //HAL_TYPES_H
