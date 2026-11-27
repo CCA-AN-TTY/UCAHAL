@@ -75,14 +75,13 @@ void hal_init(uintn_t core_id,tsmp_t TSMP){
   core_info_t core_info = {0};
   core_info.core_id=core_id;
   core_info.dcache_block_size=64;
-  set_core_info_ptr(&core_info);
+  asm volatile ("mv tp,%0" :: "r"(&core_info) : "tp","memory");
   console_puthex(core_id);
   binit((uintn_t)_end);
   init_parse(TSMP);
   console_putln("CORE ID:");
   hal_trap_init(core_id,0);
   init_spec();
-  console_putc('\a');
 
 
   asm volatile ("FENCE.I" ::: "memory");

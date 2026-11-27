@@ -16,10 +16,9 @@ typedef struct{
 
 typedef struct core_info_t core_info_t;
 
-extern inline void reg_snapshot();
-extern inline uintn_t hal_get_core_id();
-extern inline core_info_t* get_core_info_ptr();
-extern inline void set_core_info_ptr(core_info_t* core_info);
+extern __attribute__ ((always_inline)) inline void reg_snapshot();
+extern __attribute__ ((always_inline)) inline uintn_t hal_get_core_id();
+extern __attribute__ ((always_inline)) inline core_info_t* get_core_info_ptr();
 extern void init_spec();
 
 #endif //SPEC_H

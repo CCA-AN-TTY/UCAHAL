@@ -14,4 +14,4 @@
 extern __attribute__((always_inline)) inline void init_plic(unsigned long hart);
 extern __attribute__((noinline)) void isr(unsigned long hart);
 
-#endif
+#endif //PLIC_H

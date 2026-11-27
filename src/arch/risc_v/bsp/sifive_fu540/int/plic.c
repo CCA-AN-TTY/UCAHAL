@@ -35,7 +35,9 @@ void isr(unsigned long hart) {
   unsigned int irq = claim(hart);
   switch (irq) {
   case UART_IRQ:
+
     console_isr();
+
     break;
   default:
     break;

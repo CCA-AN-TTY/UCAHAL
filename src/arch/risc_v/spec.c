@@ -12,9 +12,9 @@ __attribute__ ((always_inline)) inline core_info_t* get_core_info_ptr(){
   asm volatile ("mv %0,tp" : "=r"(core_info) :: "memory");
   return core_info;
 }
-__attribute__ ((always_inline)) inline void set_core_info_ptr(core_info_t* core_info){
-  asm volatile ("mv tp,%0" :: "r"(&core_info) : "tp","memory");
-}
+//__attribute__ ((always_inline)) inline void set_core_info_ptr(core_info_t* core_info){
+//  asm volatile ("mv tp,%0" :: "r"(&core_info) : "tp","memory");
+//}
 
 
 
